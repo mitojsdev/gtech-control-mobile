@@ -1,20 +1,23 @@
 import { View, Text, FlatList, StyleSheet } from 'react-native';
-
-const produtos = [
-  { id: '1', nome: 'Fone de Ouvido Bluetooth', preco: 99.90 },
-  { id: '2', nome: 'Capa para Celular', preco: 19.90 },
-  { id: '3', nome: 'Carregador Turbo', preco: 49.90 },
-  { id: '4', nome: 'Smartphone Android', preco: 1299.90 },
-  { id: '5', nome: 'Suporte Veicular para Versa', preco: 26.00 },
-];
+import { useEffect, useState } from 'react';
+import { setupDatabase } from '@/database/setup';
+import { listarProdutos } from '@/database/db';
 
 export default function ProdutosScreen() {
+  const [produtos, setProdutos] = useState<{ id: number; nome: string; preco: number }[]>([]);
+
+  useEffect(() => {
+    setupDatabase();
+    const produtosDoBanco = listarProdutos();
+    setProdutos(produtosDoBanco);
+  }, []);
+
   return (
     <View style={styles.container}>
       <Text style={styles.titulo}>Lista de Produtos</Text>
       <FlatList
         data={produtos}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <View style={styles.item}>
             <Text style={styles.nome}>{item.nome}</Text>
@@ -26,6 +29,7 @@ export default function ProdutosScreen() {
   );
 }
 
+// 👇 define os estilos fora do componente, DEPOIS do export
 const styles = StyleSheet.create({
   container: {
     flex: 1,
