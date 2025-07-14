@@ -79,7 +79,9 @@ export default function ProdutosScreen() {
 
   
   const produtosFiltrados = produtos
-  .filter((produto) => produto.nome.toLowerCase().includes(busca.toLowerCase()))
+  .filter((produto) => 
+    produto.nome?.toLowerCase().includes(busca.toLowerCase())
+  )
   .sort((a, b) => {
     if (criterioOrdenacao === 'nome') return a.nome.localeCompare(b.nome);
     return a.preco - b.preco;
@@ -121,7 +123,7 @@ export default function ProdutosScreen() {
         <Picker.Item label="Nome" value="nome" />
         <Picker.Item label="Preço" value="preco" />
       </Picker>
-      
+
       <FlatList
         data={produtosFiltrados}
         keyExtractor={(item) => item.id.toString()}

@@ -91,5 +91,51 @@ export const excluirCliente = (id: number) => {
   }
 }
 
+// INSERIR VENDA
+export const inserirVenda = (
+  clienteId: number,
+  produtoId: number,
+  quantidade: number,
+  total: number
+) => {
+  const data = new Date().toISOString(); // Formato ISO, tipo: 2025-07-14T18:30:00.000Z
+  try {
+    db.execSync(`
+      INSERT INTO vendas (cliente_id, produto_id, quantidade, total, data)
+      VALUES (${clienteId}, ${produtoId}, ${quantidade}, ${total}, '${data}');
+    `);
+    console.log('✅ Venda inserida com sucesso!');
+  } catch (error) {
+    console.error('❌ Erro ao inserir venda:', error);
+  }
+};
+
+// LISTAR VENDAS (opcionalmente com JOIN pra mostrar nomes)
+export const listarVendas = () => {
+  try {
+    const result = db.getAllSync(`
+      SELECT
+        v.id,
+        v.cliente_id,
+        c.nome AS nome_cliente,
+        v.produto_id,
+        p.nome AS nome_produto,
+        v.quantidade,
+        v.total,
+        v.data
+      FROM vendas v
+      JOIN clientes c ON c.id = v.cliente_id
+      JOIN produtos p ON p.id = v.produto_id
+      ORDER BY v.data DESC;
+    `);
+
+    return result;
+  } catch (error) {
+    console.error('❌ Erro ao listar vendas:', error);
+    return [];
+  }
+};
+
+
 
 export default db;
