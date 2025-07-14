@@ -12,4 +12,19 @@ export function setupDatabase() {
   }).catch((error) => {
     console.error('Erro ao criar a tabela:', error);
   });
+
+  db.execAsync(`
+    CREATE TABLE IF NOT EXISTS clientes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      nome TEXT NOT NULL,
+      telefone TEXT,
+      email TEXT
+    );
+  `)
+    .then(() => {
+      console.log('Tabela "clientes" criada com sucesso!');
+    })
+    .catch((error) => {
+      console.error('Erro ao criar a tabela "clientes":', error);
+    });
 }

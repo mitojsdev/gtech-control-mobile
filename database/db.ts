@@ -46,4 +46,50 @@ export const excluirProduto = (id: number) => {
   }
 }
 
+
+export const inserirCliente = (nome: string, telefone: number, email: string) => {
+  try {
+    db.execSync(
+      `INSERT INTO clientes (nome, telefone, email) VALUES ('${nome}', ${telefone}, '${email}');`
+    );
+    console.log('✅ Cliente inserido com sucesso!');
+  } catch (error) {
+    console.error('❌ Erro ao inserir cliente:', error);
+  }
+};
+
+export const listarClientes = (): { id: number; nome: string; telefone: number ; email: string}[] => {
+  try {
+    const results = db.getAllSync(`SELECT * FROM clientes`);
+    return results as { id: number; nome: string; telefone: number; email: string} [];
+  } catch (error) {
+    console.error('❌ Erro ao listar clientes:', error);
+    return [];
+  }
+};
+
+export const editarClientes = (id: number, nome: string, telefone: number, email: string) => {
+  try {
+    db.runSync(
+      `UPDATE clientes SET nome = ?, telefone = ?, email = ? WHERE id = ?`,
+      [nome, telefone, email, id]
+    );
+    console.log('✏️ Cliente editado com sucesso!');
+  } catch (error) {
+    console.error('❌ Erro ao editar cliente:', error);
+  }
+};
+
+export const excluirCliente = (id: number) => {
+  try {
+    db.execSync(
+      `DELETE from clientes WHERE id = ${id};`,
+    );
+    console.log('✏️ Cliente excluido com sucesso!');    
+  } catch (error) {
+    console.error('❌ Erro ao excluir cliente:', error);
+  }
+}
+
+
 export default db;
