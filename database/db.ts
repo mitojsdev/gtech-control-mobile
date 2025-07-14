@@ -23,4 +23,27 @@ export const listarProdutos = (): { id: number; nome: string; preco: number }[] 
   }
 };
 
+export const editarProduto = (id: number, nome: string, preco: number) => {
+  try {
+    db.runSync(
+      `UPDATE produtos SET nome = ?, preco = ? WHERE id = ?`,
+      [nome, preco, id]
+    );
+    console.log('✏️ Produto editado com sucesso!');
+  } catch (error) {
+    console.error('❌ Erro ao editar produto:', error);
+  }
+};
+
+export const excluirProduto = (id: number) => {
+  try {
+    db.execSync(
+      `DELETE from produtos WHERE id = ${id};`,
+    );
+    console.log('✏️ Produto excluido com sucesso!');    
+  } catch (error) {
+    console.error('❌ Erro ao excluir produto:', error);
+  }
+}
+
 export default db;

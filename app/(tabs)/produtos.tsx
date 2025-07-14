@@ -1,12 +1,17 @@
-import { View, Text, FlatList, StyleSheet, TextInput, Button, Alert } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TextInput, Button, Alert, Modal, TouchableOpacity } from 'react-native';
 import { useEffect, useState } from 'react';
 import { setupDatabase } from '@/database/setup';
-import { listarProdutos, inserirProduto } from '@/database/db';
+import { listarProdutos, inserirProduto, editarProduto, excluirProduto } from '@/database/db';
 
 export default function ProdutosScreen() {
   const [produtos, setProdutos] = useState<{ id: number; nome: string; preco: number }[]>([]);
   const [nome, setNome] = useState('');
   const [preco, setPreco] = useState('');
+  const [modalVisible, setModalVisible] = useState(false);
+  const [produtoSelecionado, setProdutoSelecionado] = useState<{ id: number; nome: string; preco: number } | null>(null);
+  const [nomeEditado, setNomeEditado] = useState('');
+  const [precoEditado, setPrecoEditado] = useState('');
+
 
   useEffect(() => {
     setupDatabase();
@@ -36,6 +41,40 @@ export default function ProdutosScreen() {
     carregarProdutos();
   };
 
+  const abrirModalEdicao = (produto: { id: number; nome: string; preco: number }) => {
+    setProdutoSelecionado(produto);
+    setNomeEditado(produto.nome);
+    setPrecoEditado(produto.preco.toString());
+    setModalVisible(true);
+  };
+
+  const salvarEdicao = () => {
+    if (produtoSelecionado) {
+      editarProduto(produtoSelecionado.id, nomeEditado, parseFloat(precoEditado));
+      setModalVisible(false);
+      carregarProdutos(); // Atualiza lista
+    }
+  };
+
+  const deletarProduto = (id: number) => {
+    Alert.alert('Confirmar exclusão', 'Deseja excluir este produto?', [
+      {
+        text: 'Cancelar',
+        style: 'cancel',
+      },
+      {
+        text: 'Excluir',
+        style: 'destructive',
+        onPress: () => {
+          excluirProduto(id);
+          carregarProdutos();
+        },
+      },
+    ]);
+  };
+  
+  
+
   return (
     <View style={styles.container}>
       <Text style={styles.titulo}>Lista de Produtos</Text>
@@ -58,13 +97,39 @@ export default function ProdutosScreen() {
       <FlatList
         data={produtos}
         keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.item}>
-            <Text style={styles.nome}>{item.nome}</Text>
-            <Text style={styles.preco}>R$ {item.preco.toFixed(2)}</Text>
-          </View>
+        renderItem={({ item }) => (          
+          <TouchableOpacity onPress={() => abrirModalEdicao(item)}>
+            <View style={styles.item}>
+              <Text style={styles.nome}>{item.nome}</Text>
+              <Text style={styles.preco}>R$ {item.preco.toFixed(2)}</Text>
+              <Button title="Excluir" color="red" onPress={() => deletarProduto(item.id)} />
+            </View>
+          </TouchableOpacity>
         )}
       />
+
+      <Modal visible={modalVisible} animationType="slide" transparent={true}>
+              <View style={styles.modalContainer}>
+                <View style={styles.modalContent}>
+                  <Text style={styles.titulo}>Editar Produto</Text>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Nome do produto"
+                    value={nomeEditado}
+                    onChangeText={setNomeEditado}
+                  />
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Preço"
+                    value={precoEditado}
+                    onChangeText={setPrecoEditado}
+                    keyboardType="numeric"
+                  />
+                  <Button title="Salvar" onPress={salvarEdicao} />
+                  <Button title="Cancelar" color="red" onPress={() => setModalVisible(false)} />
+                </View>
+              </View>
+            </Modal>
     </View>
   );
 }
@@ -99,5 +164,17 @@ const styles = StyleSheet.create({
   preco: {
     fontSize: 14,
     color: '#444',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  modalContent: {
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 10,
+    width: '90%',
   },
 });
