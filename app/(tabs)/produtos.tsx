@@ -2,6 +2,7 @@ import { View, Text, FlatList, StyleSheet, TextInput, Button, Alert, Modal, Touc
 import { useEffect, useState } from 'react';
 import { setupDatabase } from '@/database/setup';
 import { listarProdutos, inserirProduto, editarProduto, excluirProduto } from '@/database/db';
+import { Picker } from '@react-native-picker/picker';
 
 export default function ProdutosScreen() {
   const [produtos, setProdutos] = useState<{ id: number; nome: string; preco: number }[]>([]);
@@ -11,6 +12,8 @@ export default function ProdutosScreen() {
   const [produtoSelecionado, setProdutoSelecionado] = useState<{ id: number; nome: string; preco: number } | null>(null);
   const [nomeEditado, setNomeEditado] = useState('');
   const [precoEditado, setPrecoEditado] = useState('');
+  const [busca, setBusca] = useState('');
+  const [criterioOrdenacao, setCriterioOrdenacao] = useState<'nome' | 'preco'>('nome');
 
 
   useEffect(() => {
@@ -73,6 +76,16 @@ export default function ProdutosScreen() {
     ]);
   };
   
+
+  
+  const produtosFiltrados = produtos
+  .filter((produto) => produto.nome.toLowerCase().includes(busca.toLowerCase()))
+  .sort((a, b) => {
+    if (criterioOrdenacao === 'nome') return a.nome.localeCompare(b.nome);
+    return a.preco - b.preco;
+  });
+
+  
   
 
   return (
@@ -94,8 +107,23 @@ export default function ProdutosScreen() {
       />
       <Button title="Adicionar Produto" onPress={adicionarProduto} />
 
+      <TextInput
+        style={styles.input}
+        placeholder="Buscar produto..."
+        value={busca}
+        onChangeText={setBusca}
+      />
+      <Text style={{ fontWeight: 'bold', marginTop: 10 }}>Ordenar por:</Text>
+
+      <Picker
+        selectedValue={criterioOrdenacao}
+        onValueChange={(itemValue) => setCriterioOrdenacao(itemValue)}>
+        <Picker.Item label="Nome" value="nome" />
+        <Picker.Item label="Preço" value="preco" />
+      </Picker>
+      
       <FlatList
-        data={produtos}
+        data={produtosFiltrados}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (          
           <TouchableOpacity onPress={() => abrirModalEdicao(item)}>
