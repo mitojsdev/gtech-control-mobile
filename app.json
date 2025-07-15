@@ -4,7 +4,7 @@
     "slug": "GtechControlMobile",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/gtech_logo_app.png",
     "scheme": "gtechcontrolmobile",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,

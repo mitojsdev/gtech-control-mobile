@@ -1,4 +1,5 @@
 import { View, Text, FlatList, StyleSheet, TextInput, Button, Alert, Modal } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useEffect, useState } from 'react';
 import { Picker } from '@react-native-picker/picker';
 import { setupDatabase } from '@/database/setup';
@@ -80,7 +81,7 @@ export default function VendasScreen() {
     
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Text style={styles.titulo}>Lista de Vendas</Text>
 
       <TextInput
@@ -106,7 +107,8 @@ export default function VendasScreen() {
           <View style={styles.item}>
             <Text style={styles.nome}>Cliente: {item.nome_cliente}</Text>
             <Text style={styles.nome}>Produto: {item.nome_produto}</Text>
-            <Text style={styles.preco}>Qtd: {item.quantidade}</Text>
+            <Text style={styles.preco}>Qtd: {item.quantidade}</Text>            
+            <Text style={styles.preco}>R$ {item.total.toFixed(2)}</Text>
           </View>
         )}
       />
@@ -153,7 +155,7 @@ export default function VendasScreen() {
           </View>
         </View>
       </Modal>
-    </View>
+    </SafeAreaView>
   );
 }
 

@@ -1,4 +1,5 @@
 import { View, Text, FlatList, StyleSheet, TextInput, Button, Alert, Modal, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useEffect, useState } from 'react';
 import { setupDatabase } from '@/database/setup';
 import { listarProdutos, inserirProduto, editarProduto, excluirProduto } from '@/database/db';
@@ -91,7 +92,7 @@ export default function ProdutosScreen() {
   
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Text style={styles.titulo}>Lista de Produtos</Text>
 
       <TextInput
@@ -160,7 +161,7 @@ export default function ProdutosScreen() {
                 </View>
               </View>
             </Modal>
-    </View>
+    </SafeAreaView>
   );
 }
 

@@ -1,4 +1,5 @@
 import { View, Text, FlatList, StyleSheet, TextInput, Button, Alert, Modal, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useEffect, useState } from 'react';
 import { setupDatabase } from '@/database/setup';
 import { listarClientes, inserirCliente, editarClientes, excluirCliente } from '@/database/db';
@@ -92,7 +93,7 @@ export default function ClientesScreen() {
   
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Text style={styles.titulo}>Lista de Clientes</Text>
 
       <TextInput
@@ -175,7 +176,7 @@ export default function ClientesScreen() {
                 </View>
               </View>
             </Modal>
-    </View>
+    </SafeAreaView>
   );
 }
 
